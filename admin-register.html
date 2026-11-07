@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poster Paradise | Admin Register</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-primary: #f8fafc;
+            --bg-card: #ffffff;
+            --border-light: #e2e8f0;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --accent-orange: #ff7700;
+            --accent-red: #dc2626;
+            --accent-green: #16a34a;
+            --shadow-subtle: 0 4px 20px -2px rgba(15, 23, 42, 0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .login-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            padding: 2.5rem;
+            border-radius: 16px;
+            box-shadow: var(--shadow-subtle);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .login-header h1 {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-top: 0.5rem;
+        }
+
+        .login-header p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 0.3rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin-bottom: 0.4rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            outline: none;
+            background: var(--bg-primary);
+        }
+
+        input:focus {
+            border-color: var(--accent-orange);
+        }
+
+        .login-btn {
+            background: var(--accent-orange);
+            color: #fff;
+            border: none;
+            width: 100%;
+            padding: 0.85rem;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            margin-top: 1rem;
+        }
+
+        .login-btn:hover {
+            opacity: 0.9;
+        }
+
+        .error-msg {
+            color: var(--accent-red);
+            font-size: 0.85rem;
+            text-align: center;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .success-msg {
+            color: var(--accent-green);
+            font-size: 0.85rem;
+            text-align: center;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .links {
+            text-align: center;
+            margin-top: 1.5rem;
+            font-size: 0.85rem;
+        }
+
+        .links a {
+            color: var(--accent-orange);
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .links a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-card">
+        <div class="login-header">
+            <i class="fa-solid fa-user-plus" style="font-size: 2rem; color: var(--accent-orange);"></i>
+            <h1>Create Admin Account</h1>
+            <p>Poster Paradise Registration</p>
+        </div>
+        <form id="registerForm" onsubmit="handleRegister(event)">
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" id="username" placeholder="Choose admin username" required>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <div style="position: relative;">
+                    <input type="password" id="password" placeholder="Create strong password" required style="padding-right: 2.5rem;">
+                    <i class="fa-solid fa-eye" id="togglePassword" onclick="togglePasswordVisibility()" style="position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--text-muted);"></i>
+                </div>
+            </div>
+            <button type="submit" class="login-btn">Register Admin</button>
+            <div class="error-msg" id="errorMsg">Registration failed</div>
+            <div class="success-msg" id="successMsg">Admin registered successfully! Redirecting...</div>
+        </form>
+        <div class="links">
+            Already have an account? <a href="admin-login.html">Login here</a>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = "https://poster-paradise-backend.onrender.com/";
+
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.getElementById('togglePassword');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        }
+
+        async function handleRegister(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const errorMsg = document.getElementById('errorMsg');
+            const successMsg = document.getElementById('successMsg');
+
+            errorMsg.style.display = 'none';
+            successMsg.style.display = 'none';
+
+            try {
+                const res = await fetch(`${API_BASE_URL}/admin/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    successMsg.style.display = 'block';
+                    setTimeout(() => {
+                        window.location.href = 'admin-login.html';
+                    }, 1500);
+                } else {
+                    errorMsg.innerText = data.error || 'Registration failed';
+                    errorMsg.style.display = 'block';
+                }
+            } catch (err) {
+                console.error("Register error:", err);
+                errorMsg.innerText = 'Server connection error';
+                errorMsg.style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>

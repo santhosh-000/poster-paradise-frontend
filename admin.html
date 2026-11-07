@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poster Paradise | Admin Panel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-primary: #f8fafc;
+            --bg-card: #ffffff;
+            --border-light: #e2e8f0;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --accent-orange: #ff7700;
+            --accent-red: #dc2626;
+            --shadow-subtle: 0 4px 20px -2px rgba(15, 23, 42, 0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        aside {
+            width: 280px;
+            background: var(--bg-card);
+            border-right: 1px solid var(--border-light);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
+        }
+
+        .admin-logo {
+            padding: 1.5rem;
+            font-size: 1.1rem;
+            font-weight: 800;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--accent-orange);
+        }
+
+        .admin-nav {
+            list-style: none;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .admin-nav li a {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.8rem 1rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .admin-nav li a:hover, .admin-nav li a.active {
+            background: rgba(255, 119, 0, 0.1);
+            color: var(--accent-orange);
+        }
+
+        main {
+            margin-left: 280px;
+            flex: 1;
+            padding: 2.5rem;
+            max-width: 1200px;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 800;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .view-site-btn {
+            background: #111;
+            color: #fff;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        .logout-btn {
+            background: var(--accent-red);
+            color: #fff;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .logout-btn:hover {
+            opacity: 0.9;
+        }
+
+        /* Stats Cards Styling (Two cards: Registered Users & Live Visitors) */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-subtle);
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .stat-card-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .stat-card-value {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .panel-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: 14px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-subtle);
+            display: none;
+        }
+
+        .panel-section.active {
+            display: block;
+        }
+
+        h2 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin-bottom: 0.4rem;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            outline: none;
+            background: var(--bg-primary);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        input[type="file"] {
+            padding: 0.5rem;
+            cursor: pointer;
+        }
+
+        input:focus, textarea:focus {
+            border-color: var(--accent-orange);
+        }
+
+        button.primary-btn {
+            background: var(--accent-orange);
+            color: #fff;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        button.primary-btn:hover {
+            opacity: 0.9;
+        }
+
+        .item-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            margin-top: 1rem;
+        }
+
+        .item-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg-primary);
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-light);
+        }
+
+        .item-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .item-info img {
+            width: 40px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        button.action-btn {
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            border: none;
+            font-weight: 700;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+
+        .edit-btn { background: #3b82f6; color: #fff; }
+        .delete-btn { background: var(--accent-red); color: #fff; }
+        .move-btn { background: #64748b; color: #fff; }
+    </style>
+</head>
+<body>
+
+    <aside>
+        <div class="admin-logo">
+            <i class="fa-solid fa-gauge-high"></i> Poster Paradise Admin
+        </div>
+        <ul class="admin-nav">
+            <li><a class="nav-link active" onclick="switchTab('tab-settings', this)"><i class="fa-solid fa-sliders"></i> General Settings</a></li>
+            <li><a class="nav-link" onclick="switchTab('tab-categories', this)"><i class="fa-solid fa-folder-tree"></i> Manage Categories</a></li>
+            <li><a class="nav-link" onclick="switchTab('tab-posters', this)"><i class="fa-solid fa-image"></i> Manage Posters</a></li>
+            <li><a class="nav-link" onclick="switchTab('tab-testimonials', this)"><i class="fa-solid fa-star"></i> Testimonials</a></li>
+        </ul>
+    </aside>
+
+    <main>
+        <div class="header-top">
+            <h1 id="pageTitle">General Settings</h1>
+            <div class="header-actions">
+                <a href="index.html" class="view-site-btn" target="_blank"><i class="fa-solid fa-globe"></i> View Live Site</a>
+                <button class="logout-btn" onclick="logoutAdmin()"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+            </div>
+        </div>
+
+        <!-- Live Admin Analytics Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-card-title">
+                    <span><i class="fa-solid fa-users" style="color: var(--accent-orange); margin-right: 6px;"></i> Total Registered Users</span>
+                </div>
+                <div class="stat-card-value" id="statTotalUsers">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-title">
+                    <span><i class="fa-solid fa-signal" style="color: #22c55e; margin-right: 6px;"></i> Live Visitors Right Now</span>
+                    <span style="width: 8px; height: 8px; background: #22c55e; border-radius: 50%; display: inline-block; animation: pulse 1.5s infinite;"></span>
+                </div>
+                <div class="stat-card-value" id="statLiveVisitors">0</div>
+            </div>
+        </div>
+
+        <!-- TAB 1: GENERAL SETTINGS -->
+        <div id="tab-settings" class="panel-section active">
+            <h2>Website Settings & Banners</h2>
+            <div class="form-group" style="display: flex; align-items: center; gap: 0.8rem; background: var(--bg-primary); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-light);">
+                <input type="checkbox" id="settingIsLive" style="width: 20px; height: 20px; cursor: pointer;">
+                <label for="settingIsLive" style="margin: 0; cursor: pointer; color: var(--text-main); font-size: 0.95rem;">Enable Live Status on Site</label>
+            </div>
+            
+            <div class="form-group" style="display: flex; align-items: center; gap: 0.8rem; background: var(--bg-primary); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-light);">
+                <input type="checkbox" id="settingAdvanceEnabled" style="width: 20px; height: 20px; cursor: pointer;">
+                <label for="settingAdvanceEnabled" style="margin: 0; cursor: pointer; color: var(--text-main); font-size: 0.95rem;">Enable 50% Advance & UPI Link CTA</label>
+            </div>
+
+            <div class="form-group">
+                <label>Fixed Delivery Charge (₹)</label>
+                <input type="number" id="settingDeliveryCharge" placeholder="50">
+            </div>
+
+            <div class="form-group">
+                <label>Google Maps Live Location URL</label>
+                <input type="text" id="settingLiveLocation" placeholder="https://maps.google.com/?q=...">
+            </div>
+
+            <div class="form-group">
+                <label>UPI Payment Link / UPI ID (For Advance Payment)</label>
+                <input type="text" id="settingUpiQr" placeholder="e.g. upi://pay?pa=yourname@paytm&pn=PosterParadise or yourname@paytm">
+            </div>
+
+            <div class="form-group">
+                <label>WhatsApp CTA Template Message</label>
+                <textarea id="settingWhatsappTemplate" placeholder="Vanakkam! Poster Paradise-ku ungaloda varavelpu..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Desktop Hero Banner 1 (16:9 Ratio Recommended)</label>
+                <input type="file" id="settingBannerDesktop1File" accept="image/*">
+            </div>
+            <div class="form-group">
+                <label>Desktop Hero Banner 2 (16:9 Ratio Recommended)</label>
+                <input type="file" id="settingBannerDesktop2File" accept="image/*">
+            </div>
+
+            <div class="form-group">
+                <label>Mobile Hero Banner 1 (4:5 Ratio Recommended)</label>
+                <input type="file" id="settingBannerMobile1File" accept="image/*">
+            </div>
+            <div class="form-group">
+                <label>Mobile Hero Banner 2 (4:5 Ratio Recommended)</label>
+                <input type="file" id="settingBannerMobile2File" accept="image/*">
+            </div>
+
+            <button class="primary-btn" onclick="saveSettings()">Save Settings</button>
+        </div>
+
+        <!-- TAB 2: MANAGE CATEGORIES -->
+        <div id="tab-categories" class="panel-section">
+            <h2>Add / Manage Categories & Drive Links</h2>
+            <div class="form-group">
+                <label>Category Title</label>
+                <input type="text" id="catTitleInput" placeholder="e.g. Anime Quotes">
+            </div>
+            <div class="form-group">
+                <label>Google Drive Folder Link for this Category (11th Card)</label>
+                <input type="text" id="catDriveInput" placeholder="https://drive.google.com/drive/folders/...">
+            </div>
+            <button class="primary-btn" onclick="saveCategory()">Save Category</button>
+
+            <div style="margin-top: 2rem;">
+                <h3 style="font-size: 1rem; margin-bottom: 1rem;">Existing Categories</h3>
+                <div class="item-list" id="categoryListContainer"></div>
+            </div>
+        </div>
+
+        <!-- TAB 3: MANAGE POSTERS -->
+        <div id="tab-posters" class="panel-section">
+            <h2>Add / Manage & Reorder Posters</h2>
+            <div class="form-group">
+                <label>Select Category</label>
+                <select id="posterCategorySelect"></select>
+            </div>
+            <div class="form-group">
+                <label>Poster Title</label>
+                <input type="text" id="posterTitleInput" placeholder="Poster Name">
+            </div>
+            <div class="form-group">
+                <label>Price (₹)</label>
+                <input type="number" id="posterPriceInput" placeholder="299">
+            </div>
+            <div class="form-group">
+                <label>Main Poster Image File (Auto Compressed)</label>
+                <input type="file" id="posterImgFile" accept="image/*">
+            </div>
+            <div class="form-group">
+                <label>Angle Thumbnail 1 File (Optional)</label>
+                <input type="file" id="posterAngle1File" accept="image/*">
+            </div>
+            <div class="form-group">
+                <label>Angle Thumbnail 2 File (Optional)</label>
+                <input type="file" id="posterAngle2File" accept="image/*">
+            </div>
+            <button class="primary-btn" onclick="savePoster()">Save Poster</button>
+
+            <div style="margin-top: 2rem;">
+                <h3 style="font-size: 1rem; margin-bottom: 1rem;">Posters in Selected Category</h3>
+                <div class="item-list" id="posterListContainer"></div>
+            </div>
+        </div>
+
+        <!-- TAB 4: TESTIMONIALS -->
+        <div id="tab-testimonials" class="panel-section">
+            <h2>Manage Customer Testimonials</h2>
+            <div class="form-group">
+                <label>Customer Name</label>
+                <input type="text" id="testNameInput" placeholder="Priya S.">
+            </div>
+            <div class="form-group">
+                <label>Location / City</label>
+                <input type="text" id="testCityInput" placeholder="Chennai">
+            </div>
+            <div class="form-group">
+                <label>Wall Setup Image File (Auto Compressed)</label>
+                <input type="file" id="testImgFile" accept="image/*">
+            </div>
+            <div class="form-group">
+                <label>Review Text</label>
+                <input type="text" id="testReviewInput" placeholder="Amazing quality...">
+            </div>
+            <button class="primary-btn" onclick="saveTestimonial()">Add Testimonial</button>
+
+            <div style="margin-top: 2rem;">
+                <h3 style="font-size: 1rem; margin-bottom: 1rem;">Existing Testimonials</h3>
+                <div class="item-list" id="testimonialListContainer"></div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const API_BASE_URL = "https://poster-paradise-backend.onrender.com/";
+        let categories = [];
+        let testimonials = [];
+
+        // Check Admin Session on Page Load
+        async function checkAdminSession() {
+            try {
+                const res = await fetch(`${API_BASE_URL}/admin/check-session`, { credentials: 'include' });
+                const data = await res.json();
+                if (!data.authenticated) {
+                    window.location.href = 'admin-login.html';
+                }
+            } catch (err) {
+                console.error("Session check error:", err);
+                window.location.href = 'admin-login.html';
+            }
+        }
+
+        async function logoutAdmin() {
+            try {
+                await fetch(`${API_BASE_URL}/admin/logout`, { method: 'POST', credentials: 'include' });
+                window.location.href = 'admin-login.html';
+            } catch (err) {
+                window.location.href = 'admin-login.html';
+            }
+        }
+
+        // Fetch Live Stats & Active Visitors from Backend
+        async function fetchAdminStats() {
+            try {
+                const res = await fetch(`${API_BASE_URL}/admin/stats`, { credentials: 'include' });
+                const stats = await res.json();
+                if (res.ok) {
+                    document.getElementById('statTotalUsers').innerText = stats.totalUsers || 0;
+                    document.getElementById('statLiveVisitors').innerText = stats.activeVisitors || 0;
+                }
+            } catch (err) {
+                console.error("Error fetching admin stats:", err);
+            }
+        }
+
+        function compressImage(file, maxWidth = 1400, maxHeight = 1000, quality = 0.75) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = event => {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = () => {
+                        let width = img.width;
+                        let height = img.height;
+                        if (width > height) {
+                            if (width > maxWidth) {
+                                height = Math.round((height * maxWidth) / width);
+                                width = maxWidth;
+                            }
+                        } else {
+                            if (height > maxHeight) {
+                                width = Math.round((width * maxHeight) / height);
+                                height = maxHeight;
+                            }
+                        }
+                        const canvas = document.createElement('canvas');
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        resolve(canvas.toDataURL('image/jpeg', quality));
+                    };
+                    img.onerror = error => reject(error);
+                };
+            });
+        }
+
+        function switchTab(tabId, el) {
+            document.querySelectorAll('.panel-section').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            el.classList.add('active');
+            document.getElementById('pageTitle').innerText = el.innerText.trim();
+
+            if (tabId === 'tab-categories') loadCategoriesAdmin();
+            if (tabId === 'tab-posters') { loadCategoryDropdown(); }
+            if (tabId === 'tab-testimonials') loadTestimonialsAdmin();
+            if (tabId === 'tab-settings') loadSettings();
+        }
+
+        async function loadSettings() {
+            try {
+                const res = await fetch(`${API_BASE_URL}/settings`, { credentials: 'include' });
+                const settings = await res.json();
+                document.getElementById('settingLiveLocation').value = settings.liveLocation || '';
+                document.getElementById('settingIsLive').checked = !!settings.isLive;
+                document.getElementById('settingAdvanceEnabled').checked = !!settings.advanceEnabled;
+                document.getElementById('settingDeliveryCharge').value = settings.deliveryCharge !== undefined ? settings.deliveryCharge : 50;
+                document.getElementById('settingUpiQr').value = settings.upiQr || '';
+                document.getElementById('settingWhatsappTemplate').value = settings.whatsappTemplate || '';
+            } catch (err) {
+                console.error("Error loading settings:", err);
+            }
+        }
+
+        async function saveSettings() {
+            try {
+                const liveLocation = document.getElementById('settingLiveLocation').value;
+                const isLive = document.getElementById('settingIsLive').checked;
+                const advanceEnabled = document.getElementById('settingAdvanceEnabled').checked;
+                const deliveryCharge = Number(document.getElementById('settingDeliveryCharge').value) || 0;
+                const upiQr = document.getElementById('settingUpiQr').value.trim();
+                const whatsappTemplate = document.getElementById('settingWhatsappTemplate').value;
+
+                const bd1File = document.getElementById('settingBannerDesktop1File').files[0];
+                const bd2File = document.getElementById('settingBannerDesktop2File').files[0];
+                const bm1File = document.getElementById('settingBannerMobile1File').files[0];
+                const bm2File = document.getElementById('settingBannerMobile2File').files[0];
+
+                let bannerDesktop1 = undefined;
+                let bannerDesktop2 = undefined;
+                let bannerMobile1 = undefined;
+                let bannerMobile2 = undefined;
+
+                if (bd1File) bannerDesktop1 = await compressImage(bd1File, 1600, 900, 0.8);
+                if (bd2File) bannerDesktop2 = await compressImage(bd2File, 1600, 900, 0.8);
+                if (bm1File) bannerMobile1 = await compressImage(bm1File, 800, 1000, 0.75);
+                if (bm2File) bannerMobile2 = await compressImage(bm2File, 800, 1000, 0.75);
+
+                const currentRes = await fetch(`${API_BASE_URL}/settings`, { credentials: 'include' });
+                const currentSettings = await currentRes.json();
+
+                await fetch(`${API_BASE_URL}/settings`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        liveLocation,
+                        isLive,
+                        advanceEnabled,
+                        deliveryCharge,
+                        upiQr,
+                        whatsappTemplate,
+                        bannerDesktop1: bannerDesktop1 || currentSettings.bannerDesktop1,
+                        bannerDesktop2: bannerDesktop2 || currentSettings.bannerDesktop2,
+                        bannerMobile1: bannerMobile1 || currentSettings.bannerMobile1,
+                        bannerMobile2: bannerMobile2 || currentSettings.bannerMobile2
+                    })
+                });
+
+                alert('Settings saved successfully!');
+            } catch (err) {
+                console.error("Error saving settings:", err);
+                alert('Failed to save settings');
+            }
+        }
+
+        let editingCatId = null;
+        async function saveCategory() {
+            const title = document.getElementById('catTitleInput').value.trim();
+            const driveUrl = document.getElementById('catDriveInput').value.trim() || "https://drive.google.com/drive/folders/-";
+            if (!title) return alert('Enter category title');
+            
+            const id = editingCatId ? editingCatId : 'cat-' + title.toLowerCase().replace(/[^a-z0-9]/g, '-');
+            
+            try {
+                const res = await fetch(`${API_BASE_URL}/categories`, { credentials: 'include' });
+                const freshCategories = await res.json();
+                const existingCat = freshCategories.find(c => c.id === id);
+                const posters = existingCat ? existingCat.posters || [] : [];
+
+                await fetch(`${API_BASE_URL}/categories`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ id, title, driveUrl, posters })
+                });
+
+                document.getElementById('catTitleInput').value = '';
+                document.getElementById('catDriveInput').value = '';
+                editingCatId = null;
+                loadCategoriesAdmin();
+                alert('Category saved successfully!');
+            } catch (err) {
+                console.error("Error saving category:", err);
+            }
+        }
+
+        async function loadCategoriesAdmin() {
+            try {
+                const res = await fetch(`${API_BASE_URL}/categories`, { credentials: 'include' });
+                const data = await res.json();
+                categories = Array.isArray(data) ? data : [];
+                renderCategoriesAdminFromMemory();
+            } catch (err) {
+                console.error("Error loading categories:", err);
+                categories = [];
+            }
+        }
+
+        async function moveCategory(index, direction) {
+            const newIndex = index + direction;
+            if (newIndex < 0 || newIndex >= categories.length) return;
+            const temp = categories[index];
+            categories[index] = categories[newIndex];
+            categories[newIndex] = temp;
+            
+            renderCategoriesAdminFromMemory();
+            await saveAllCategoriesOrder();
+        }
+
+        async function saveAllCategoriesOrder() {
+            try {
+                for (const cat of categories) {
+                    await fetch(`${API_BASE_URL}/categories`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
+                        body: JSON.stringify(cat)
+                    });
+                }
+            } catch (err) {
+                console.error("Error saving categories order:", err);
+            }
+        }
+
+        function renderCategoriesAdminFromMemory() {
+            let html = '';
+            categories.forEach((cat, idx) => {
+                const posterCount = (cat.posters && Array.isArray(cat.posters)) ? cat.posters.length : 0;
+                html += `
+                    <div class="item-row">
+                        <span><strong>${cat.title}</strong> (${posterCount} posters)</span>
+                        <div class="actions">
+                            <button class="action-btn move-btn" onclick="moveCategory(${idx}, -1)"><i class="fa-solid fa-arrow-up"></i></button>
+                            <button class="action-btn move-btn" onclick="moveCategory(${idx}, 1)"><i class="fa-solid fa-arrow-down"></i></button>
+                            <button class="action-btn edit-btn" onclick="editCategory('${cat.id}')">Edit</button>
+                            <button class="action-btn delete-btn" onclick="deleteCategory('${cat.id}')">Delete</button>
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('categoryListContainer').innerHTML = html;
+        }
+
+        function editCategory(id) {
+            let cat = categories.find(c => c.id === id);
+            if (cat) {
+                document.getElementById('catTitleInput').value = cat.title;
+                document.getElementById('catDriveInput').value = cat.driveUrl || '';
+                editingCatId = id;
+            }
+        }
+
+        async function deleteCategory(id) {
+            if (confirm('Delete this category?')) {
+                try {
+                    await fetch(`${API_BASE_URL}/categories/${id}`, { method: 'DELETE', credentials: 'include' });
+                    loadCategoriesAdmin();
+                } catch (err) {
+                    console.error("Error deleting category:", err);
+                }
+            }
+        }
+
+        async function loadCategoryDropdown() {
+            try {
+                const res = await fetch(`${API_BASE_URL}/categories`, { credentials: 'include' });
+                const data = await res.json();
+                categories = Array.isArray(data) ? data : [];
+                
+                let html = '';
+                categories.forEach(cat => {
+                    html += `<option value="${cat.id}">${cat.title}</option>`;
+                });
+                document.getElementById('posterCategorySelect').innerHTML = html;
+                renderPostersAdmin();
+            } catch (err) {
+                console.error("Error loading category dropdown:", err);
+                categories = [];
+            }
+        }
+
+        document.getElementById('posterCategorySelect').addEventListener('change', renderPostersAdmin);
+
+        async function savePoster() {
+            const catId = document.getElementById('posterCategorySelect').value;
+            const title = document.getElementById('posterTitleInput').value.trim();
+            const price = Number(document.getElementById('posterPriceInput').value);
+            const mainFile = document.getElementById('posterImgFile').files[0];
+            const angle1File = document.getElementById('posterAngle1File').files[0];
+            const angle2File = document.getElementById('posterAngle2File').files[0];
+
+            if (!title || !price || !mainFile) return alert('Please enter title, price, and main poster image file.');
+
+            try {
+                const image_url = await compressImage(mainFile, 800, 1000, 0.7);
+                const angle1 = angle1File ? await compressImage(angle1File, 800, 1000, 0.7) : image_url;
+                const angle2 = angle2File ? await compressImage(angle2File, 800, 1000, 0.7) : image_url;
+
+                const res = await fetch(`${API_BASE_URL}/categories`, { credentials: 'include' });
+                const freshCategories = await res.json();
+                let cat = freshCategories.find(c => c.id === catId);
+
+                if (cat) {
+                    if (!cat.posters || !Array.isArray(cat.posters)) cat.posters = [];
+                    cat.posters.push({ title, price, image_url, angles: [angle1, angle2] });
+
+                    await fetch(`${API_BASE_URL}/categories`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
+                        body: JSON.stringify(cat)
+                    });
+
+                    document.getElementById('posterTitleInput').value = '';
+                    document.getElementById('posterPriceInput').value = '';
+                    document.getElementById('posterImgFile').value = '';
+                    document.getElementById('posterAngle1File').value = '';
+                    document.getElementById('posterAngle2File').value = '';
+                    
+                    renderPostersAdmin();
+                    alert('Poster saved successfully!');
+                }
+            } catch (err) {
+                console.error("Error saving poster:", err);
+            }
+        }
+
+        async function renderPostersAdmin() {
+            const catId = document.getElementById('posterCategorySelect').value;
+            try {
+                const res = await fetch(`${API_BASE_URL}/categories`, { credentials: 'include' });
+                const data = await res.json();
+                categories = Array.isArray(data) ? data : [];
+                
+                const cat = categories.find(c => c.id === catId);
+                let html = '';
+                if (cat && cat.posters && Array.isArray(cat.posters)) {
+                    cat.posters.forEach((p, idx) => {
+                        html += `
+                            <div class="item-row">
+                                <div class="item-info">
+                                    <img src="${p.image_url}" alt="">
+                                    <div>
+                                        <strong>${p.title}</strong><br>
+                                        <small>₹${p.price}</small>
+                                    </div>
+                                </div>
+                                <div class="actions">
+                                    <button class="action-btn move-btn" onclick="movePoster('${catId}', ${idx}, -1)"><i class="fa-solid fa-arrow-up"></i></button>
+                                    <button class="action-btn move-btn" onclick="movePoster('${catId}', ${idx}, 1)"><i class="fa-solid fa-arrow-down"></i></button>
+                                    <button class="action-btn delete-btn" onclick="deletePoster('${catId}', ${idx})">Delete</button>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+                document.getElementById('posterListContainer').innerHTML = html;
+            } catch (err) {
+                console.error("Error rendering posters:", err);
+            }
+        }
+
+        async function movePoster(catId, index, direction) {
+            try {
+                const res = await fetch(`${API_BASE_URL}/categories`, { credentials: 'include' });
+                const freshCategories = await res.json();
+                let cat = freshCategories.find(c => c.id === catId);
+
+                if (!cat || !cat.posters || !Array.isArray(cat.posters)) return;
+                const newIndex = index + direction;
+                if (newIndex < 0 || newIndex >= cat.posters.length) return;
+                
+                const temp = cat.posters[index];
+                cat.posters[index] = cat.posters[newIndex];
+                cat.posters[newIndex] = temp;
+
+                await fetch(`${API_BASE_URL}/categories`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify(cat)
+                });
+                renderPostersAdmin();
+            } catch (err) {
+                console.error("Error moving poster:", err);
+            }
+        }
+
+        async function deletePoster(catId, index) {
+            if (confirm('Delete this poster?')) {
+                try {
+                    const res = await fetch(`${API_BASE_URL}/categories`, { credentials: 'include' });
+                    const freshCategories = await res.json();
+                    let cat = freshCategories.find(c => c.id === catId);
+
+                    if (cat && cat.posters && Array.isArray(cat.posters)) {
+                        cat.posters.splice(index, 1);
+                        await fetch(`${API_BASE_URL}/categories`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            credentials: 'include',
+                            body: JSON.stringify(cat)
+                        });
+                        renderPostersAdmin();
+                    }
+                } catch (err) {
+                    console.error("Error deleting poster:", err);
+                }
+            }
+        }
+
+        async function saveTestimonial() {
+            const name = document.getElementById('testNameInput').value.trim();
+            const city = document.getElementById('testCityInput').value.trim();
+            const text = document.getElementById('testReviewInput').value.trim();
+            const imgFile = document.getElementById('testImgFile').files[0];
+            if (!name || !text) return alert('Fill name and review text');
+
+            try {
+                let image = imgFile ? await compressImage(imgFile, 600, 600, 0.7) : "";
+                await fetch(`${API_BASE_URL}/testimonials`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ name, city, image, text })
+                });
+
+                document.getElementById('testNameInput').value = '';
+                document.getElementById('testCityInput').value = '';
+                document.getElementById('testImgFile').value = '';
+                document.getElementById('testReviewInput').value = '';
+                loadTestimonialsAdmin();
+                alert('Testimonial added successfully!');
+            } catch (err) {
+                console.error("Error saving testimonial:", err);
+            }
+        }
+
+        async function loadTestimonialsAdmin() {
+            try {
+                const res = await fetch(`${API_BASE_URL}/testimonials`, { credentials: 'include' });
+                const data = await res.json();
+                testimonials = Array.isArray(data) ? data : [];
+                
+                let html = '';
+                testimonials.forEach((t) => {
+                    html += `
+                        <div class="item-row">
+                            <div class="item-info">
+                                ${t.image ? `<img src="${t.image}" alt="">` : ''}
+                                <div>
+                                    <strong>${t.name} (${t.city})</strong><br>
+                                    <small>"${t.text}"</small>
+                                </div>
+                            </div>
+                            <div class="actions">
+                                <button class="action-btn delete-btn" onclick="deleteTestimonial(${t.id})">Delete</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                document.getElementById('testimonialListContainer').innerHTML = html;
+            } catch (err) {
+                console.error("Error loading testimonials:", err);
+                testimonials = [];
+            }
+        }
+
+        async function deleteTestimonial(id) {
+            if (confirm('Testimonial-ah delete pannanuma?')) {
+                try {
+                    await fetch(`${API_BASE_URL}/testimonials/${id}`, { method: 'DELETE', credentials: 'include' });
+                    loadTestimonialsAdmin();
+                } catch (err) {
+                    console.error("Error deleting testimonial:", err);
+                }
+            }
+        }
+
+        window.onload = () => { 
+            checkAdminSession();
+            fetchAdminStats(); 
+            setInterval(fetchAdminStats, 5000); // Refresh active visitors every 5 seconds
+            loadSettings();
+            loadCategoriesAdmin(); 
+        };
+    </script>
+</body>
+</html>
