@@ -470,16 +470,10 @@
         let categories = [];
         let testimonials = [];
 
-        // Check Admin Session on Page Load
-        async function checkAdminSession() {
-            try {
-                const res = await fetch(`${API_BASE_URL}/api/admin/check-session`, { credentials: 'include' });
-                const data = await res.json();
-                if (!data.authenticated) {
-                    window.location.href = 'admin-login.html';
-                }
-            } catch (err) {
-                console.error("Session check error:", err);
+        // Check Admin Session via LocalStorage
+        function checkAdminSession() {
+            const isLoggedIn = localStorage.getItem('isAdminLoggedIn');
+            if (!isLoggedIn) {
                 window.location.href = 'admin-login.html';
             }
         }
@@ -487,10 +481,12 @@
         async function logoutAdmin() {
             try {
                 await fetch(`${API_BASE_URL}/api/admin/logout`, { method: 'POST', credentials: 'include' });
-                window.location.href = 'admin-login.html';
             } catch (err) {
-                window.location.href = 'admin-login.html';
+                console.error("Logout error:", err);
             }
+            localStorage.removeItem('isAdminLoggedIn');
+            localStorage.removeItem('adminUser');
+            window.location.href = 'admin-login.html';
         }
 
         // Fetch Live Stats & Active Visitors from Backend
