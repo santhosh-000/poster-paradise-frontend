@@ -473,7 +473,7 @@
         // Check Admin Session on Page Load
         async function checkAdminSession() {
             try {
-                const res = await fetch(`${API_BASE_URL}/admin/check-session`, { credentials: 'include' });
+                const res = await fetch(`${API_BASE_URL}/api/admin/check-session`, { credentials: 'include' });
                 const data = await res.json();
                 if (!data.authenticated) {
                     window.location.href = 'admin-login.html';
@@ -486,7 +486,7 @@
 
         async function logoutAdmin() {
             try {
-                await fetch(`${API_BASE_URL}/admin/logout`, { method: 'POST', credentials: 'include' });
+                await fetch(`${API_BASE_URL}/api/admin/logout`, { method: 'POST', credentials: 'include' });
                 window.location.href = 'admin-login.html';
             } catch (err) {
                 window.location.href = 'admin-login.html';
@@ -496,7 +496,7 @@
         // Fetch Live Stats & Active Visitors from Backend
         async function fetchAdminStats() {
             try {
-                const res = await fetch(`${API_BASE_URL}/admin/stats`, { credentials: 'include' });
+                const res = await fetch(`${API_BASE_URL}/api/admin/stats`, { credentials: 'include' });
                 const stats = await res.json();
                 if (res.ok) {
                     document.getElementById('statTotalUsers').innerText = stats.totalUsers || 0;
@@ -555,7 +555,7 @@
 
         async function loadSettings() {
             try {
-                const res = await fetch(`${API_BASE_URL}/settings`, { credentials: 'include' });
+                const res = await fetch(`${API_BASE_URL}/api/settings`, { credentials: 'include' });
                 const settings = await res.json();
                 document.getElementById('settingLiveLocation').value = settings.liveLocation || '';
                 document.getElementById('settingIsLive').checked = !!settings.isLive;
@@ -592,10 +592,10 @@
                 if (bm1File) bannerMobile1 = await compressImage(bm1File, 800, 1000, 0.75);
                 if (bm2File) bannerMobile2 = await compressImage(bm2File, 800, 1000, 0.75);
 
-                const currentRes = await fetch(`${API_BASE_URL}/settings`, { credentials: 'include' });
+                const currentRes = await fetch(`${API_BASE_URL}/api/settings`, { credentials: 'include' });
                 const currentSettings = await currentRes.json();
 
-                await fetch(`${API_BASE_URL}/settings`, {
+                await fetch(`${API_BASE_URL}/api/settings`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'include',
@@ -629,12 +629,12 @@
             const id = editingCatId ? editingCatId : 'cat-' + title.toLowerCase().replace(/[^a-z0-9]/g, '-');
             
             try {
-                const res = await fetch(`${API_BASE_URL}/categories`, { credentials: 'include' });
+                const res = await fetch(`${API_BASE_URL}/api/categories`, { credentials: 'include' });
                 const freshCategories = await res.json();
                 const existingCat = freshCategories.find(c => c.id === id);
                 const posters = existingCat ? existingCat.posters || [] : [];
 
-                await fetch(`${API_BASE_URL}/categories`, {
+                await fetch(`${API_BASE_URL}/api/categories`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'include',
@@ -653,7 +653,7 @@
 
         async function loadCategoriesAdmin() {
             try {
-                const res = await fetch(`${API_BASE_URL}/categories`, { credentials: 'include' });
+                const res = await fetch(`${API_BASE_URL}/api/categories`, { credentials: 'include' });
                 const data = await res.json();
                 categories = Array.isArray(data) ? data : [];
                 renderCategoriesAdminFromMemory();
@@ -677,7 +677,7 @@
         async function saveAllCategoriesOrder() {
             try {
                 for (const cat of categories) {
-                    await fetch(`${API_BASE_URL}/categories`, {
+                    await fetch(`${API_BASE_URL}/api/categories`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         credentials: 'include',
@@ -720,7 +720,7 @@
         async function deleteCategory(id) {
             if (confirm('Delete this category?')) {
                 try {
-                    await fetch(`${API_BASE_URL}/categories/${id}`, { method: 'DELETE', credentials: 'include' });
+                    await fetch(`${API_BASE_URL}/api/categories/${id}`, { method: 'DELETE', credentials: 'include' });
                     loadCategoriesAdmin();
                 } catch (err) {
                     console.error("Error deleting category:", err);
@@ -730,7 +730,7 @@
 
         async function loadCategoryDropdown() {
             try {
-                const res = await fetch(`${API_BASE_URL}/categories`, { credentials: 'include' });
+                const res = await fetch(`${API_BASE_URL}/api/categories`, { credentials: 'include' });
                 const data = await res.json();
                 categories = Array.isArray(data) ? data : [];
                 
@@ -763,7 +763,7 @@
                 const angle1 = angle1File ? await compressImage(angle1File, 800, 1000, 0.7) : image_url;
                 const angle2 = angle2File ? await compressImage(angle2File, 800, 1000, 0.7) : image_url;
 
-                const res = await fetch(`${API_BASE_URL}/categories`, { credentials: 'include' });
+                const res = await fetch(`${API_BASE_URL}/api/categories`, { credentials: 'include' });
                 const freshCategories = await res.json();
                 let cat = freshCategories.find(c => c.id === catId);
 
@@ -771,7 +771,7 @@
                     if (!cat.posters || !Array.isArray(cat.posters)) cat.posters = [];
                     cat.posters.push({ title, price, image_url, angles: [angle1, angle2] });
 
-                    await fetch(`${API_BASE_URL}/categories`, {
+                    await fetch(`${API_BASE_URL}/api/categories`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         credentials: 'include',
@@ -795,7 +795,7 @@
         async function renderPostersAdmin() {
             const catId = document.getElementById('posterCategorySelect').value;
             try {
-                const res = await fetch(`${API_BASE_URL}/categories`, { credentials: 'include' });
+                const res = await fetch(`${API_BASE_URL}/api/categories`, { credentials: 'include' });
                 const data = await res.json();
                 categories = Array.isArray(data) ? data : [];
                 
@@ -829,7 +829,7 @@
 
         async function movePoster(catId, index, direction) {
             try {
-                const res = await fetch(`${API_BASE_URL}/categories`, { credentials: 'include' });
+                const res = await fetch(`${API_BASE_URL}/api/categories`, { credentials: 'include' });
                 const freshCategories = await res.json();
                 let cat = freshCategories.find(c => c.id === catId);
 
@@ -841,7 +841,7 @@
                 cat.posters[index] = cat.posters[newIndex];
                 cat.posters[newIndex] = temp;
 
-                await fetch(`${API_BASE_URL}/categories`, {
+                await fetch(`${API_BASE_URL}/api/categories`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'include',
@@ -856,13 +856,13 @@
         async function deletePoster(catId, index) {
             if (confirm('Delete this poster?')) {
                 try {
-                    const res = await fetch(`${API_BASE_URL}/categories`, { credentials: 'include' });
+                    const res = await fetch(`${API_BASE_URL}/api/categories`, { credentials: 'include' });
                     const freshCategories = await res.json();
                     let cat = freshCategories.find(c => c.id === catId);
 
                     if (cat && cat.posters && Array.isArray(cat.posters)) {
                         cat.posters.splice(index, 1);
-                        await fetch(`${API_BASE_URL}/categories`, {
+                        await fetch(`${API_BASE_URL}/api/categories`, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             credentials: 'include',
@@ -885,7 +885,7 @@
 
             try {
                 let image = imgFile ? await compressImage(imgFile, 600, 600, 0.7) : "";
-                await fetch(`${API_BASE_URL}/testimonials`, {
+                await fetch(`${API_BASE_URL}/api/testimonials`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'include',
@@ -905,7 +905,7 @@
 
         async function loadTestimonialsAdmin() {
             try {
-                const res = await fetch(`${API_BASE_URL}/testimonials`, { credentials: 'include' });
+                const res = await fetch(`${API_BASE_URL}/api/testimonials`, { credentials: 'include' });
                 const data = await res.json();
                 testimonials = Array.isArray(data) ? data : [];
                 
@@ -936,7 +936,7 @@
         async function deleteTestimonial(id) {
             if (confirm('Testimonial-ah delete pannanuma?')) {
                 try {
-                    await fetch(`${API_BASE_URL}/testimonials/${id}`, { method: 'DELETE', credentials: 'include' });
+                    await fetch(`${API_BASE_URL}/api/testimonials/${id}`, { method: 'DELETE', credentials: 'include' });
                     loadTestimonialsAdmin();
                 } catch (err) {
                     console.error("Error deleting testimonial:", err);
