@@ -1647,7 +1647,7 @@
 
         async function fetchSettings() {
             try {
-                const res = await fetch(`${API_BASE_URL}/settings`);
+                const res = await fetch(`${API_BASE_URL}/api/settings`);
                 siteSettings = await res.json();
                 
                 const liveBtn = document.getElementById('liveLocationBtn');
@@ -1677,7 +1677,7 @@
 
         async function fetchCategories() {
             try {
-                const res = await fetch(`${API_BASE_URL}/categories`);
+                const res = await fetch(`${API_BASE_URL}/api/categories`);
                 const data = await res.json();
                 
                 if (Array.isArray(data)) {
@@ -1707,7 +1707,7 @@
 
         async function fetchTestimonials() {
             try {
-                const res = await fetch(`${API_BASE_URL}/testimonials`);
+                const res = await fetch(`${API_BASE_URL}/api/testimonials`);
                 const data = await res.json();
                 if (Array.isArray(data)) {
                     testimonials = data;
@@ -1723,7 +1723,7 @@
 
         async function checkUserSession() {
             try {
-                const res = await fetch(`${API_BASE_URL}/user/check-session`, { credentials: 'include' });
+                const res = await fetch(`${API_BASE_URL}/api/user/check-session`, { credentials: 'include' });
                 const data = await res.json();
                 if (data.authenticated) {
                     currentUser = data.user;
@@ -1740,7 +1740,7 @@
             const password = document.getElementById('loginPassword').value.trim();
 
             try {
-                const res = await fetch(`${API_BASE_URL}/user/login`, {
+                const res = await fetch(`${API_BASE_URL}/api/user/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'include',
@@ -1768,7 +1768,7 @@
             const address = document.getElementById('regAddress').value.trim();
 
             try {
-                const res = await fetch(`${API_BASE_URL}/user/register`, {
+                const res = await fetch(`${API_BASE_URL}/api/user/register`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'include',
@@ -1790,7 +1790,7 @@
 
         async function handleUserLogout() {
             try {
-                await fetch(`${API_BASE_URL}/user/logout`, { method: 'POST', credentials: 'include' });
+                await fetch(`${API_BASE_URL}/api/user/logout`, { method: 'POST', credentials: 'include' });
                 currentUser = null;
                 cartItems = [];
                 renderCart();
@@ -1842,7 +1842,7 @@
         async function fetchCart() {
             if (!currentUser) return;
             try {
-                const res = await fetch(`${API_BASE_URL}/cart`, { credentials: 'include' });
+                const res = await fetch(`${API_BASE_URL}/api/cart`, { credentials: 'include' });
                 const data = await res.json();
                 if (Array.isArray(data)) {
                     cartItems = data;
@@ -1871,7 +1871,7 @@
             };
 
             try {
-                const res = await fetch(`${API_BASE_URL}/cart`, {
+                const res = await fetch(`${API_BASE_URL}/api/cart`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'include',
@@ -1891,7 +1891,7 @@
 
         async function removeFromCart(id) {
             try {
-                await fetch(`${API_BASE_URL}/cart/${id}`, { method: 'DELETE', credentials: 'include' });
+                await fetch(`${API_BASE_URL}/api/cart/${id}`, { method: 'DELETE', credentials: 'include' });
                 fetchCart();
             } catch (err) {
                 console.error("Error removing cart item:", err);
@@ -1989,7 +1989,7 @@
             if (!name || !city || !text) return alert('Please fill in all fields.');
 
             try {
-                const res = await fetch(`${API_BASE_URL}/feedbacks`, {
+                const res = await fetch(`${API_BASE_URL}/api/feedbacks`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ name, city, text })
