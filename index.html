@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Poster Paradise | Premium A3 & A4 Wall Posters</title>
     <!-- Google Fonts & FontAwesome -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -173,7 +173,6 @@
             box-shadow: 0 6px 16px rgba(15, 23, 42, 0.15);
         }
 
-        /* Hide profile button on mobile from header */
         .desktop-profile-btn {
             display: none;
         }
@@ -373,7 +372,6 @@
             transform: translateX(4px);
         }
 
-        /* Dropdown styling inside drawer */
         .drawer-dropdown {
             display: flex;
             flex-direction: column;
@@ -456,7 +454,6 @@
             background: var(--bg-secondary);
         }
 
-        /* Cart Item Card inside Drawer */
         .cart-item-row {
             display: flex;
             gap: 1.2rem;
@@ -661,40 +658,41 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
-        /* 300+ Customers & Fast Live Marquee Section */
+        /* Exact Layout Matching Requested Image Style */
         .customers-marquee-section {
             width: 100%;
             background: var(--bg-secondary);
             border-bottom: 1px solid var(--border-light);
-            padding: 2.5rem 0;
+            padding: 2.8rem 0 2.2rem 0;
             overflow: hidden;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 1.5rem;
+            gap: 1.8rem;
+            text-align: center;
         }
 
-        .customers-counter-badge {
-            font-size: 1.4rem;
-            font-weight: 800;
-            color: var(--text-main);
-            background: #ffffff;
-            padding: 0.8rem 2rem;
-            border-radius: 50px;
-            border: 1px solid var(--border-light);
-            box-shadow: var(--shadow-subtle);
+        .customers-stat-box {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 0.8rem;
-            letter-spacing: -0.5px;
+            gap: 0.15rem;
         }
 
-        .customers-counter-badge .big-count {
-            font-size: 2rem;
+        .customers-stat-box .big-count {
+            font-size: 3.2rem;
             font-weight: 900;
-            color: var(--accent-orange);
-            display: inline-block;
+            color: var(--text-main);
+            letter-spacing: -1.5px;
+            line-height: 1;
             font-variant-numeric: tabular-nums;
+        }
+
+        .customers-stat-box .label-text {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--accent-orange);
+            letter-spacing: -0.2px;
         }
 
         .marquee-container {
@@ -710,7 +708,7 @@
             display: flex;
             gap: 1.2rem;
             width: max-content;
-            animation: scrollMarqueeFast 12s linear infinite;
+            animation: scrollMarqueeFast 10s linear infinite;
         }
 
         .marquee-track:hover {
@@ -1688,10 +1686,11 @@
         </div>
     </section>
 
-    <!-- 300+ Counting Format & Fast Scrolling Posters Section -->
+    <!-- Exact Reference Style Counter & Fast Scrolling Posters Section -->
     <section class="customers-marquee-section">
-        <div class="customers-counter-badge">
-            <i class="fa-solid fa-award" style="color: var(--accent-orange);"></i> Trusted by <span class="big-count" id="counterDisplay">0</span>+ Trustable Customers
+        <div class="customers-stat-box">
+            <div class="big-count"><span id="counterDisplay">0</span>+</div>
+            <div class="label-text">Trustable Customers</div>
         </div>
         <div class="marquee-container">
             <div class="marquee-track" id="marqueeTrack">
@@ -1911,7 +1910,6 @@
             if (allPosters.length === 0) return;
 
             let html = '';
-            // Duplicate array multiple times for smooth continuous loop
             const marqueeList = [...allPosters, ...allPosters, ...allPosters, ...allPosters];
             marqueeList.forEach(poster => {
                 html += `
@@ -1929,7 +1927,7 @@
             if (!counterEl) return;
             let current = 0;
             const target = 300;
-            const duration = 2000; // 2 seconds
+            const duration = 2000;
             const increment = target / (duration / 25);
 
             const timer = setInterval(() => {
@@ -2201,7 +2199,6 @@
             document.getElementById('cartDelivery').innerText = `₹${deliveryCharge}`;
             document.getElementById('cartTotal').innerText = `₹${finalTotal}`;
 
-            // Build Batch WhatsApp Message
             let message = `Hello, I would like to place a batch order from my account (*${currentUser.name}* - ${currentUser.phone}):\n\n`;
             cartItems.forEach((item, idx) => {
                 message += `${idx + 1}. *${item.title}*\n   Size: ${item.size} | Qty: ${item.quantity} | Price: ₹${item.price * item.quantity}\n\n`;
