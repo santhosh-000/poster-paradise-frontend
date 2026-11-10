@@ -661,6 +661,82 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
+        /* 300+ Customers & Live Delivered Posters Scroller Section */
+        .customers-marquee-section {
+            width: 100%;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-light);
+            padding: 2.2rem 0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.2rem;
+        }
+
+        .customers-counter-badge {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--text-main);
+            background: #ffffff;
+            padding: 0.5rem 1.4rem;
+            border-radius: 50px;
+            border: 1px solid var(--border-light);
+            box-shadow: var(--shadow-subtle);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .customers-counter-badge span {
+            color: var(--accent-orange);
+        }
+
+        .marquee-container {
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+            -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+        }
+
+        .marquee-track {
+            display: flex;
+            gap: 1rem;
+            width: max-content;
+            animation: scrollMarquee 30s linear infinite;
+        }
+
+        .marquee-track:hover {
+            animation-play-state: paused;
+        }
+
+        @keyframes scrollMarquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        .marquee-poster-box {
+            width: 85px;
+            height: 105px;
+            background: var(--bg-card);
+            border-radius: 10px;
+            border: 1px solid var(--border-light);
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .marquee-poster-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
         main {
             width: 100%;
             display: flex;
@@ -1601,6 +1677,18 @@
         </div>
     </section>
 
+    <!-- 300+ Customers & Live Delivered Posters Scroller -->
+    <section class="customers-marquee-section">
+        <div class="customers-counter-badge">
+            <i class="fa-solid fa-fire" style="color: var(--accent-orange);"></i> Trusted by <span>300+ Customers</span> Across India
+        </div>
+        <div class="marquee-container">
+            <div class="marquee-track" id="marqueeTrack">
+                <!-- Dynamically populated from posters list -->
+            </div>
+        </div>
+    </section>
+
     <!-- Main Content Wrapper -->
     <main>
         <div id="collectionsContainer" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
@@ -1788,6 +1876,7 @@
                     renderNavigationDropdown();
                     renderDesktopDropdown();
                     renderCollections(5);
+                    populateMarqueePosters();
                 } else {
                     categories = [];
                 }
@@ -1795,6 +1884,32 @@
                 console.error("Error fetching categories:", err);
                 categories = [];
             }
+        }
+
+        function populateMarqueePosters() {
+            const track = document.getElementById('marqueeTrack');
+            if (!track) return;
+            
+            let allPosters = [];
+            categories.forEach(cat => {
+                if (cat.posters && Array.isArray(cat.posters)) {
+                    allPosters = allPosters.concat(cat.posters);
+                }
+            });
+
+            if (allPosters.length === 0) return;
+
+            let html = '';
+            // Duplicate array twice to make infinite marquee seamless
+            const marqueeList = [...allPosters, ...allPosters, ...allPosters];
+            marqueeList.forEach(poster => {
+                html += `
+                    <div class="marquee-poster-box">
+                        <img src="${poster.image_url}" alt="${poster.title}" loading="lazy">
+                    </div>
+                `;
+            });
+            track.innerHTML = html;
         }
 
         function renderDesktopDropdown() {
