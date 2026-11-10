@@ -661,35 +661,40 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
-        /* 300+ Customers & Live Delivered Posters Scroller Section */
+        /* 300+ Customers & Fast Live Marquee Section */
         .customers-marquee-section {
             width: 100%;
             background: var(--bg-secondary);
             border-bottom: 1px solid var(--border-light);
-            padding: 2.2rem 0;
+            padding: 2.5rem 0;
             overflow: hidden;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 1.2rem;
+            gap: 1.5rem;
         }
 
         .customers-counter-badge {
-            font-size: 1.1rem;
+            font-size: 1.4rem;
             font-weight: 800;
             color: var(--text-main);
             background: #ffffff;
-            padding: 0.5rem 1.4rem;
+            padding: 0.8rem 2rem;
             border-radius: 50px;
             border: 1px solid var(--border-light);
             box-shadow: var(--shadow-subtle);
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.8rem;
+            letter-spacing: -0.5px;
         }
 
-        .customers-counter-badge span {
+        .customers-counter-badge .big-count {
+            font-size: 2rem;
+            font-weight: 900;
             color: var(--accent-orange);
+            display: inline-block;
+            font-variant-numeric: tabular-nums;
         }
 
         .marquee-container {
@@ -697,38 +702,44 @@
             overflow: hidden;
             position: relative;
             display: flex;
-            mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
-            -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+            mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+            -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
         }
 
         .marquee-track {
             display: flex;
-            gap: 1rem;
+            gap: 1.2rem;
             width: max-content;
-            animation: scrollMarquee 30s linear infinite;
+            animation: scrollMarqueeFast 12s linear infinite;
         }
 
         .marquee-track:hover {
             animation-play-state: paused;
         }
 
-        @keyframes scrollMarquee {
+        @keyframes scrollMarqueeFast {
             0% { transform: translateX(0); }
             100% { transform: translateX(-50%); }
         }
 
         .marquee-poster-box {
-            width: 85px;
-            height: 105px;
+            width: 110px;
+            height: 140px;
             background: var(--bg-card);
-            border-radius: 10px;
+            border-radius: 12px;
             border: 1px solid var(--border-light);
             overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
             flex-shrink: 0;
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: transform 0.3s ease;
+        }
+
+        .marquee-poster-box:hover {
+            transform: scale(1.08);
+            border-color: var(--accent-orange);
         }
 
         .marquee-poster-box img {
@@ -1677,10 +1688,10 @@
         </div>
     </section>
 
-    <!-- 300+ Customers & Live Delivered Posters Scroller -->
+    <!-- 300+ Counting Format & Fast Scrolling Posters Section -->
     <section class="customers-marquee-section">
         <div class="customers-counter-badge">
-            <i class="fa-solid fa-fire" style="color: var(--accent-orange);"></i> Trusted by <span>300+ Customers</span> Across India
+            <i class="fa-solid fa-award" style="color: var(--accent-orange);"></i> Trusted by <span class="big-count" id="counterDisplay">0</span>+ Trustable Customers
         </div>
         <div class="marquee-container">
             <div class="marquee-track" id="marqueeTrack">
@@ -1900,8 +1911,8 @@
             if (allPosters.length === 0) return;
 
             let html = '';
-            // Duplicate array twice to make infinite marquee seamless
-            const marqueeList = [...allPosters, ...allPosters, ...allPosters];
+            // Duplicate array multiple times for smooth continuous loop
+            const marqueeList = [...allPosters, ...allPosters, ...allPosters, ...allPosters];
             marqueeList.forEach(poster => {
                 html += `
                     <div class="marquee-poster-box">
@@ -1910,6 +1921,26 @@
                 `;
             });
             track.innerHTML = html;
+        }
+
+        // Animated Counting Effect for 300+
+        function startCounterAnimation() {
+            const counterEl = document.getElementById('counterDisplay');
+            if (!counterEl) return;
+            let current = 0;
+            const target = 300;
+            const duration = 2000; // 2 seconds
+            const increment = target / (duration / 25);
+
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    counterEl.innerText = target;
+                    clearInterval(timer);
+                } else {
+                    counterEl.innerText = Math.floor(current);
+                }
+            }, 25);
         }
 
         function renderDesktopDropdown() {
@@ -2543,6 +2574,7 @@
                 checkUserSession()
             ]);
             hideSiteLoader();
+            startCounterAnimation();
 
             // --- METHOD 1: URL Query Parameter Auto-Open Modal ---
             const urlParams = new URLSearchParams(window.location.search);
