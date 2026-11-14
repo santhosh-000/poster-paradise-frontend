@@ -630,7 +630,7 @@
             border-color: white;
         }
 
-        /* ========== COUNTER & FILTER BUTTON SECTION ========== */
+        /* ========== COUNTER & FILTER SECTION ========== */
         .customers-marquee-section {
             width: 100%;
             background: linear-gradient(180deg, #fff8f3 0%, #ffffff 100%);
@@ -642,13 +642,14 @@
             align-items: center;
             gap: 1.5rem;
             text-align: center;
+            position: relative;
         }
 
         .customers-stat-box .big-count {
             font-size: 3.2rem;
             font-weight: 800;
             color: var(--text-main);
-            letter-spacing: -1.5px;
+            letter-spacing -1.5px;
             line-height: 1;
         }
 
@@ -659,14 +660,24 @@
             margin-top: 0.2rem;
         }
 
-        /* Filter Trigger Button Style */
+        /* Filter Trigger Button Aligned to Right Corner Below Marquee */
+        .filter-action-wrapper {
+            max-width: 1400px;
+            width: 100%;
+            padding: 0 1.8rem;
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: -0.5rem;
+            margin-top: 0.5rem;
+        }
+
         .global-filter-trigger-btn {
             background: var(--gradient-accent);
             color: white;
             border: none;
-            padding: 0.7rem 1.6rem;
+            padding: 0.6rem 1.4rem;
             border-radius: 50px;
-            font-size: 0.92rem;
+            font-size: 0.88rem;
             font-weight: 800;
             cursor: pointer;
             display: inline-flex;
@@ -676,7 +687,6 @@
             transition: var(--transition);
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-top: 0.4rem;
         }
 
         .global-filter-trigger-btn:hover {
@@ -830,6 +840,25 @@
             width: 90px;
         }
 
+        /* Grid layout for 2 products per row when filtered */
+        .collection-grid-view {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .collection-grid-view {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .collection-grid-view {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
         .collection-scroll {
             display: flex;
             gap: 1.4rem;
@@ -851,7 +880,7 @@
 
         /* Product Cards */
         .trending-card {
-            flex: 0 0 240px;
+            width: 100%;
             background: white;
             border-radius: 18px;
             overflow: hidden;
@@ -861,6 +890,10 @@
             flex-direction: column;
             cursor: pointer;
             transition: var(--transition);
+        }
+
+        .collection-scroll .trending-card {
+            flex: 0 0 240px;
         }
 
         .trending-card:hover {
@@ -1710,20 +1743,22 @@
         </div>
     </section>
 
-    <!-- Counter + Filter Button + Marquee -->
+    <!-- Counter + Marquee + Right Aligned Filter Button Below It -->
     <section class="customers-marquee-section">
         <div class="customers-stat-box">
             <div class="big-count"><span id="counterDisplay">0</span>+</div>
             <div class="label-text">Trustable Customers</div>
         </div>
 
-        <!-- Filter Trigger Button -->
-        <button class="global-filter-trigger-btn" onclick="openFilterModal()">
-            <i class="fa-solid fa-filter"></i> Filter Categories
-        </button>
-
         <div class="marquee-container">
             <div class="marquee-track" id="marqueeTrack"></div>
+        </div>
+
+        <!-- Filter Button Aligned to Right Corner -->
+        <div class="filter-action-wrapper">
+            <button class="global-filter-trigger-btn" onclick="openFilterModal()">
+                <i class="fa-solid fa-filter"></i> Filter
+            </button>
         </div>
     </section>
 
@@ -1861,7 +1896,7 @@
         let siteSettings = {};
         let currentUser = null;
         let cartItems = [];
-        let activeFilteredCategoryIds = []; // Stores checked categories for filtering
+        let activeFilteredCategoryIds = [];
 
         function handleIconClick(element, event) {
             const isExpanded = element.classList.contains('expanded');
@@ -2451,18 +2486,25 @@
             const mainContainer = document.getElementById('collectionsContainer');
             mainContainer.innerHTML = '';
 
-            // Filter categories based on checkboxes selection
-            let visibleCategories = categories;
+            // Reorder categories: Selected filtered categories first, then remaining categories
+            let orderedCategories = [];
             if (activeFilteredCategoryIds.length > 0) {
-                visibleCategories = categories.filter(cat => activeFilteredCategoryIds.includes(cat.id));
+                const matchedCats = categories.filter(cat => activeFilteredCategoryIds.includes(cat.id));
+                const remainingCats = categories.filter(cat => !activeFilteredCategoryIds.includes(cat.id));
+                orderedCategories = [...matchedCats, ...remainingCats];
+            } else {
+                orderedCategories = categories.slice(0, limit);
             }
 
-            visibleCategories.forEach(cat => {
+            orderedCategories.forEach(cat => {
                 const section = document.createElement('section');
                 section.className = 'collection-section';
                 section.id = cat.id;
 
                 let cardsHTML = '';
+                const isFilteredFirst = activeFilteredCategoryIds.includes(cat.id);
+                const containerClass = isFilteredFirst ? 'collection-grid-view' : 'collection-scroll';
+
                 if (cat.posters && Array.isArray(cat.posters)) {
                     cat.posters.forEach(poster => {
                         const posterJsonString = JSON.stringify(poster).replace(/"/g, '&quot;');
@@ -2483,19 +2525,21 @@
                     });
                 }
 
-                const driveLink = cat.driveUrl || "#";
-                cardsHTML += `
-                    <a href="${driveLink}" target="_blank" class="view-all-card">
-                        <i class="fa-solid fa-folder-open"></i>
-                        <span>View All</span>
-                    </a>
-                `;
+                if (!isFilteredFirst) {
+                    const driveLink = cat.driveUrl || "#";
+                    cardsHTML += `
+                        <a href="${driveLink}" target="_blank" class="view-all-card">
+                            <i class="fa-solid fa-folder-open"></i>
+                            <span>View All</span>
+                        </a>
+                    `;
+                }
 
                 section.innerHTML = `
                     <div class="section-header">
-                        <h2 class="section-title">${cat.title}</h2>
+                        <h2 class="section-title">${cat.title} ${isFilteredFirst ? '<span style="font-size:0.8rem; background:var(--accent); color:white; padding:2px 8px; border-radius:6px; margin-left:8px;">Filtered</span>' : ''}</h2>
                     </div>
-                    <div class="collection-scroll">
+                    <div class="${containerClass}">
                         ${cardsHTML}
                     </div>
                 `;
