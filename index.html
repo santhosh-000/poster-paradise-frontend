@@ -630,7 +630,7 @@
             border-color: white;
         }
 
-        /* ========== COUNTER & FILTER SECTION ========== */
+        /* ========== COUNTER & FILTER BUTTON SECTION ========== */
         .customers-marquee-section {
             width: 100%;
             background: linear-gradient(180deg, #fff8f3 0%, #ffffff 100%);
@@ -640,7 +640,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 1.6rem;
+            gap: 1.5rem;
             text-align: center;
         }
 
@@ -659,48 +659,70 @@
             margin-top: 0.2rem;
         }
 
-        /* Category Filter Bar */
-        .category-filter-container {
-            max-width: 1400px;
-            width: 100%;
-            padding: 0 1.5rem;
-            display: flex;
-            gap: 0.75rem;
-            overflow-x: auto;
-            justify-content: center;
-            scrollbar-width: none;
-            margin-top: 0.5rem;
-        }
-
-        .category-filter-container::-webkit-scrollbar {
-            display: none;
-        }
-
-        .filter-chip {
-            background: white;
-            border: 1.5px solid var(--border-light);
-            color: var(--text-main);
-            padding: 0.55rem 1.25rem;
-            border-radius: 50px;
-            font-size: 0.88rem;
-            font-weight: 700;
-            cursor: pointer;
-            white-space: nowrap;
-            transition: var(--transition);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-        }
-
-        .filter-chip:hover {
-            border-color: var(--accent);
-            color: var(--accent);
-            transform: translateY(-2px);
-        }
-
-        .filter-chip.active {
+        /* Filter Trigger Button Style */
+        .global-filter-trigger-btn {
             background: var(--gradient-accent);
             color: white;
-            border-color: transparent;
-            box-shadow: 0 6px 16px rgba(255, 107, 0, 0.3);
+            border: none;
+            padding: 0.7rem 1.6rem;
+            border-radius: 50px;
+            font-size: 0.92rem;
+            font-weight: 800;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 6px 20px rgba(255, 107, 0, 0.3);
+            transition: var(--transition);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 0.4rem;
+        }
+
+        .global-filter-trigger-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(255, 107, 0, 0.4);
+        }
+
+        /* Filter Modal Checkboxes Styling */
+        .filter-modal-content {
+            background: white;
+            width: 100%;
+            max-width: 420px;
+            border-radius: 20px;
+            padding: 1.8rem;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+            border: 1px solid var(--border-light);
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .filter-checkboxes-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            max-height: 250px;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+
+        .filter-checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            color: var(--text-main);
+            user-select: none;
+        }
+
+        .filter-checkbox-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--accent);
+            cursor: pointer;
         }
 
         .marquee-container {
@@ -1637,6 +1659,23 @@
         </div>
     </div>
 
+    <!-- Filter Modal with Checkboxes -->
+    <div class="modal-overlay" id="filterModal" onclick="closeFilterModal(event)">
+        <div class="filter-modal-content" onclick="event.stopPropagation()">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-light); padding-bottom: 0.8rem;">
+                <h3 style="font-size: 1.15rem; font-weight: 800;">Filter Categories</h3>
+                <button class="modal-close" onclick="closeFilterModalDirect()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="filter-checkboxes-list" id="filterCheckboxesList">
+                <!-- Dynamically populated checkboxes -->
+            </div>
+            <div style="display: flex; gap: 0.75rem; margin-top: 0.5rem;">
+                <button class="feedback-btn" style="background: var(--bg-secondary); color: var(--text-main); flex: 1; border: 1.5px solid var(--border-light);" onclick="resetFilters()">Reset All</button>
+                <button class="feedback-btn" style="flex: 1;" onclick="applyCategoryFilters()">Apply Filter</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Hero -->
     <section class="hero">
         <div class="hero-ratio-box" id="heroBanner">
@@ -1649,7 +1688,6 @@
                 </div>
             </div>
 
-            <!-- 3 Bottom-Left Icon-Only Curved Square Buttons with Shine & Expand Draw Reveal on Click -->
             <div class="hero-left-buttons">
                 <a href="#" target="_blank" class="shine-draw-btn" id="liveLocationBtn" onclick="handleIconClick(this, event)" style="display: none;">
                     <i class="fa-solid fa-location-dot"></i>
@@ -1672,17 +1710,17 @@
         </div>
     </section>
 
-    <!-- Counter + Marquee + Category Filter -->
+    <!-- Counter + Filter Button + Marquee -->
     <section class="customers-marquee-section">
         <div class="customers-stat-box">
             <div class="big-count"><span id="counterDisplay">0</span>+</div>
             <div class="label-text">Trustable Customers</div>
         </div>
 
-        <!-- Category Filter Bar Added Here -->
-        <div class="category-filter-container" id="categoryFilterContainer">
-            <!-- Dynamically populated category chips -->
-        </div>
+        <!-- Filter Trigger Button -->
+        <button class="global-filter-trigger-btn" onclick="openFilterModal()">
+            <i class="fa-solid fa-filter"></i> Filter Categories
+        </button>
 
         <div class="marquee-container">
             <div class="marquee-track" id="marqueeTrack"></div>
@@ -1823,12 +1861,10 @@
         let siteSettings = {};
         let currentUser = null;
         let cartItems = [];
-        let selectedFilterCategory = 'all';
+        let activeFilteredCategoryIds = []; // Stores checked categories for filtering
 
-        // Toggle expand function for click-to-animate draw reveal on mobile/desktop
         function handleIconClick(element, event) {
             const isExpanded = element.classList.contains('expanded');
-            
             if (!isExpanded) {
                 event.preventDefault();
                 document.querySelectorAll('.shine-draw-btn').forEach(btn => btn.classList.remove('expanded'));
@@ -1844,6 +1880,55 @@
                     return true;
                 }
             }
+        }
+
+        function openFilterModal() {
+            const modal = document.getElementById('filterModal');
+            const listContainer = document.getElementById('filterCheckboxesList');
+            if (!modal || !listContainer) return;
+
+            let html = '';
+            categories.forEach(cat => {
+                const isChecked = activeFilteredCategoryIds.includes(cat.id) ? 'checked' : '';
+                html += `
+                    <label class="filter-checkbox-item">
+                        <input type="checkbox" value="${cat.id}" ${isChecked}>
+                        <span>${cat.title}</span>
+                    </label>
+                `;
+            });
+            listContainer.innerHTML = html;
+            modal.classList.add('active');
+        }
+
+        function closeFilterModal(e) {
+            document.getElementById('filterModal').classList.remove('active');
+        }
+
+        function closeFilterModalDirect() {
+            document.getElementById('filterModal').classList.remove('active');
+        }
+
+        function applyCategoryFilters() {
+            const listContainer = document.getElementById('filterCheckboxesList');
+            if (!listContainer) return;
+
+            const checkboxes = listContainer.querySelectorAll('input[type="checkbox"]');
+            activeFilteredCategoryIds = [];
+            checkboxes.forEach(cb => {
+                if (cb.checked) {
+                    activeFilteredCategoryIds.push(cb.value);
+                }
+            });
+
+            closeFilterModalDirect();
+            renderCollections(5);
+        }
+
+        function resetFilters() {
+            activeFilteredCategoryIds = [];
+            closeFilterModalDirect();
+            renderCollections(5);
         }
 
         function hideSiteLoader() {
@@ -1892,7 +1977,6 @@
                     categories = data;
                     renderNavigationDropdown();
                     renderDesktopDropdown();
-                    renderCategoryFilters();
                     renderCollections(5);
                     populateMarqueePosters();
                 } else {
@@ -1902,24 +1986,6 @@
                 console.error("Error fetching categories:", err);
                 categories = [];
             }
-        }
-
-        function renderCategoryFilters() {
-            const filterContainer = document.getElementById('categoryFilterContainer');
-            if (!filterContainer) return;
-
-            let html = `<button class="filter-chip ${selectedFilterCategory === 'all' ? 'active' : ''}" onclick="filterByCategory('all')">All Categories</button>`;
-            categories.forEach(cat => {
-                const isActive = selectedFilterCategory === cat.id ? 'active' : '';
-                html += `<button class="filter-chip ${isActive}" onclick="filterByCategory('${cat.id}')">${cat.title}</button>`;
-            });
-            filterContainer.innerHTML = html;
-        }
-
-        function filterByCategory(catId) {
-            selectedFilterCategory = catId;
-            renderCategoryFilters();
-            renderCollections(5);
         }
 
         function populateMarqueePosters() {
@@ -2385,12 +2451,10 @@
             const mainContainer = document.getElementById('collectionsContainer');
             mainContainer.innerHTML = '';
 
-            // Filter categories based on selected filter chip
+            // Filter categories based on checkboxes selection
             let visibleCategories = categories;
-            if (selectedFilterCategory !== 'all') {
-                visibleCategories = categories.filter(cat => cat.id === selectedFilterCategory);
-            } else {
-                visibleCategories = categories.slice(0, limit);
+            if (activeFilteredCategoryIds.length > 0) {
+                visibleCategories = categories.filter(cat => activeFilteredCategoryIds.includes(cat.id));
             }
 
             visibleCategories.forEach(cat => {
@@ -2440,7 +2504,7 @@
             });
 
             const viewMoreBtnContainer = document.getElementById('viewMoreContainer');
-            if (selectedFilterCategory !== 'all' || limit >= categories.length) {
+            if (activeFilteredCategoryIds.length > 0 || limit >= categories.length) {
                 viewMoreBtnContainer.style.display = 'none';
             } else {
                 viewMoreBtnContainer.style.display = 'block';
@@ -2448,8 +2512,7 @@
         }
 
         function showAllCategories() {
-            selectedFilterCategory = 'all';
-            renderCategoryFilters();
+            activeFilteredCategoryIds = [];
             renderCollections(categories.length);
         }
 
