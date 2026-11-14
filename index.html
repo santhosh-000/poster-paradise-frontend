@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Poster Paradise | Premium A3 & A4 Wall Posters</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -12,16 +12,16 @@
             --bg-secondary: #fff8f3;
             --bg-card: #ffffff;
             --border-light: #ffe4d4;
-            --text-main: #1a1a1a;
-            --text-muted: #6b7280;
+            --text-main: #111827;
+            --text-muted: #4b5563;
             --accent: #ff6b00;
             --accent-hover: #e55f00;
             --accent-soft: #fff0e6;
             --accent-gold: #f59e0b;
             --gradient-accent: linear-gradient(135deg, #ff6b00 0%, #ff9500 100%);
-            --shadow-subtle: 0 8px 30px -6px rgba(255, 107, 0, 0.08);
-            --shadow-hover: 0 20px 40px -10px rgba(255, 107, 0, 0.18);
-            --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            --shadow-subtle: 0 10px 30px -5px rgba(255, 107, 0, 0.06);
+            --shadow-hover: 0 20px 40px -10px rgba(255, 107, 0, 0.15);
+            --transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         * {
@@ -32,7 +32,7 @@
         }
 
         body {
-            font-family: 'Inter', system-ui, sans-serif;
+            font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
             background: var(--bg-primary);
             color: var(--text-main);
             min-height: 100vh;
@@ -40,10 +40,6 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-        }
-
-        h1, h2, h3, .section-title, .modal-title, .drawer-title {
-            font-family: 'Plus Jakarta Sans', sans-serif;
         }
 
         /* ========== LOADER ========== */
@@ -97,7 +93,7 @@
             width: 100%;
             z-index: 1000;
             border-bottom: 1px solid var(--border-light);
-            box-shadow: 0 2px 20px rgba(255, 107, 0, 0.05);
+            box-shadow: 0 2px 20px rgba(255, 107, 0, 0.04);
         }
 
         .nav-container {
@@ -630,7 +626,7 @@
             border-color: white;
         }
 
-        /* ========== COUNTER & FILTER SECTION ========== */
+        /* ========== COUNTER & PROFESSIONAL FILTER SECTION ========== */
         .customers-marquee-section {
             width: 100%;
             background: linear-gradient(180deg, #fff8f3 0%, #ffffff 100%);
@@ -660,38 +656,60 @@
             margin-top: 0.2rem;
         }
 
-        /* Filter Trigger Button Aligned to Right Corner Below Marquee */
+        /* Filter Action Bar (Description on Left, Professional Button on Right Corner) */
         .filter-action-wrapper {
             max-width: 1400px;
             width: 100%;
             padding: 0 1.8rem;
             display: flex;
-            justify-content: flex-end;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: -0.5rem;
             margin-top: 0.5rem;
+            gap: 1rem;
+        }
+
+        .filter-description-text {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            text-align: left;
+            line-height: 1.4;
         }
 
         .global-filter-trigger-btn {
             background: var(--gradient-accent);
             color: white;
             border: none;
-            padding: 0.6rem 1.4rem;
+            padding: 0.7rem 1.5rem;
             border-radius: 50px;
-            font-size: 0.88rem;
-            font-weight: 800;
+            font-size: 0.9rem;
+            font-weight: 700;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
-            box-shadow: 0 6px 20px rgba(255, 107, 0, 0.3);
+            gap: 0.55rem;
+            box-shadow: 0 8px 25px rgba(255, 107, 0, 0.25);
             transition: var(--transition);
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            white-space: nowrap;
         }
 
         .global-filter-trigger-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(255, 107, 0, 0.4);
+            box-shadow: 0 12px 30px rgba(255, 107, 0, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .filter-action-wrapper {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .global-filter-trigger-btn {
+                width: 100%;
+                justify-content: center;
+            }
         }
 
         /* Filter Modal Checkboxes Styling */
@@ -699,7 +717,7 @@
             background: white;
             width: 100%;
             max-width: 420px;
-            border-radius: 20px;
+            border-radius: 22px;
             padding: 1.8rem;
             box-shadow: 0 25px 50px rgba(0,0,0,0.2);
             border: 1px solid var(--border-light);
@@ -1743,7 +1761,7 @@
         </div>
     </section>
 
-    <!-- Counter + Marquee + Right Aligned Filter Button Below It -->
+    <!-- Counter + Marquee + Professional Filter Bar on Right Corner Below It -->
     <section class="customers-marquee-section">
         <div class="customers-stat-box">
             <div class="big-count"><span id="counterDisplay">0</span>+</div>
@@ -1754,10 +1772,13 @@
             <div class="marquee-track" id="marqueeTrack"></div>
         </div>
 
-        <!-- Filter Button Aligned to Right Corner -->
+        <!-- Filter Action Wrapper (Left: Explanation, Right: Professional Button) -->
         <div class="filter-action-wrapper">
+            <p class="filter-description-text">
+                Explore our exclusive collection or use the filter to quickly find your favorite wall posters by category.
+            </p>
             <button class="global-filter-trigger-btn" onclick="openFilterModal()">
-                <i class="fa-solid fa-filter"></i> Filter
+                <i class="fa-solid fa-filter"></i> Filter Categories
             </button>
         </div>
     </section>
@@ -2486,7 +2507,7 @@
             const mainContainer = document.getElementById('collectionsContainer');
             mainContainer.innerHTML = '';
 
-            // Reorder categories: Selected filtered categories first, then remaining categories
+            // Order categories: Selected filtered categories first (in grid view), then remaining categories (in scroll view)
             let orderedCategories = [];
             if (activeFilteredCategoryIds.length > 0) {
                 const matchedCats = categories.filter(cat => activeFilteredCategoryIds.includes(cat.id));
@@ -2537,7 +2558,7 @@
 
                 section.innerHTML = `
                     <div class="section-header">
-                        <h2 class="section-title">${cat.title} ${isFilteredFirst ? '<span style="font-size:0.8rem; background:var(--accent); color:white; padding:2px 8px; border-radius:6px; margin-left:8px;">Filtered</span>' : ''}</h2>
+                        <h2 class="section-title">${cat.title} ${isFilteredFirst ? '<span style="font-size:0.75rem; background:var(--accent); color:white; padding:3px 10px; border-radius:6px; margin-left:8px; font-weight:700; letter-spacing:0.3px;">Filtered</span>' : ''}</h2>
                     </div>
                     <div class="${containerClass}">
                         ${cardsHTML}
