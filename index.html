@@ -16,7 +16,7 @@
             --text-main: #0f172a;
             --text-muted: #64748b;
             --accent-orange: #ff7700;
-            --accent-red: #ff7700;
+            --accent-red: #ef4444;
             --accent-gold: #f59e0b;
             --shadow-subtle: 0 10px 30px -5px rgba(15, 23, 42, 0.04);
             --shadow-hover: 0 20px 40px -10px rgba(15, 23, 42, 0.08);
@@ -629,12 +629,84 @@
             100% { transform: scale(1); opacity: 1; }
         }
 
+        /* Floating Action Buttons Matching Reference Style */
+        .hero-floating-buttons {
+            position: absolute;
+            bottom: 25px;
+            right: 25px;
+            display: flex;
+            gap: 10px;
+            z-index: 20;
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 8px;
+            border-radius: 16px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .float-btn {
+            padding: 0.75rem 1.25rem;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 0.85rem;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition-smooth);
+            cursor: pointer;
+            border: none;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .float-btn-red {
+            background: var(--accent-red);
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+        }
+
+        .float-btn-red:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(239, 68, 68, 0.6);
+        }
+
+        .float-btn-dark {
+            background: rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+        }
+
+        .float-btn-dark:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .hero-floating-buttons {
+                bottom: 15px;
+                right: 15px;
+                left: 15px;
+                justify-content: center;
+                padding: 6px;
+            }
+            .float-btn {
+                flex: 1;
+                justify-content: center;
+                padding: 0.65rem 0.8rem;
+                font-size: 0.78rem;
+            }
+        }
+
         .hero-pills {
             position: absolute;
             bottom: 30px;
-            right: 30px;
+            left: 30px;
             display: flex;
-            gap: 10px;
+            gap: 8px;
             align-items: center;
             z-index: 10;
         }
@@ -643,22 +715,20 @@
             background: rgba(255, 255, 255, 0.4);
             backdrop-filter: blur(8px);
             border: 1px solid rgba(255, 255, 255, 0.6);
-            height: 10px;
+            height: 8px;
             border-radius: 20px;
             cursor: pointer;
             transition: var(--transition-smooth);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            width: 10px;
+            width: 8px;
         }
 
         .hero-pill.active {
-            width: 38px;
+            width: 30px;
             background: #ffffff;
             border-color: #ffffff;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
-        /* Exact Layout Matching Requested Image Style */
+        /* Exact Reference Style Counter & Fast Scrolling Posters Section */
         .customers-marquee-section {
             width: 100%;
             background: var(--bg-secondary);
@@ -1437,6 +1507,10 @@
             gap: 0.9rem;
         }
 
+        .footer-links {
+            list-style: none;
+        }
+
         .footer-links a {
             color: var(--text-muted);
             text-decoration: none;
@@ -1664,7 +1738,7 @@
         </div>
     </div>
 
-    <!-- Landing Page Section -->
+    <!-- Landing Page Section with Floating Action Buttons -->
     <section class="hero">
         <div class="hero-ratio-box" id="heroBanner">
             <div class="hero-slides-wrapper" id="heroSlidesWrapper">
@@ -1679,6 +1753,17 @@
             <a href="#" target="_blank" class="hero-live-location" id="liveLocationBtn" style="display: none;">
                 <i class="fa-solid fa-location-dot"></i> Live On
             </a>
+            
+            <!-- Floating Buttons (Matching Reference Style) -->
+            <div class="hero-floating-buttons">
+                <a href="#collectionsContainer" class="float-btn float-btn-red">
+                    <i class="fa-solid fa-bolt"></i> Browse Posters
+                </a>
+                <a href="https://wa.me/9080275121" target="_blank" class="float-btn float-btn-dark">
+                    <i class="fa-brands fa-whatsapp"></i> Quick WhatsApp
+                </a>
+            </div>
+
             <div class="hero-pills">
                 <button class="hero-pill active" onclick="currentSlide(0)" aria-label="Slide 1"></button>
                 <button class="hero-pill" onclick="currentSlide(1)" aria-label="Slide 2"></button>
@@ -1686,7 +1771,7 @@
         </div>
     </section>
 
-    <!-- Exact Reference Style Counter & Fast Scrolling Posters Section -->
+    <!-- Counter & Fast Scrolling Posters Section -->
     <section class="customers-marquee-section">
         <div class="customers-stat-box">
             <div class="big-count"><span id="counterDisplay">0</span>+</div>
