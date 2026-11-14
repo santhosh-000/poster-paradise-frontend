@@ -510,7 +510,7 @@
             object-fit: cover;
         }
 
-        /* ========== CORNER CURVED SQUARE ICON BUTTONS WITH SHINE & DRAW REVEAL ========== */
+        /* ========== CORNER CURVED SQUARE BUTTONS (ORANGE ICONS + SHINE + DRAW REVEAL) ========== */
         .hero-left-buttons {
             position: absolute;
             bottom: 25px;
@@ -568,13 +568,14 @@
 
         .shine-draw-btn i {
             font-size: 1rem;
-            color: #ffd700;
+            color: #ff6b00; /* ORANGE COLOR ICON */
             z-index: 2;
             flex-shrink: 0;
             margin-left: 2px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
         }
 
-        /* Draw type text reveal styling (expands on click/hover or active state) */
+        /* Draw type text reveal styling */
         .draw-text {
             display: inline-block;
             overflow: hidden;
@@ -587,11 +588,12 @@
             z-index: 2;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            color: white;
         }
 
-        .shine-draw-btn.expanded,
-        .shine-draw-btn:hover {
-            width: 140px; /* Expands to show text smoothly */
+        /* When clicked or expanded */
+        .shine-draw-btn.expanded {
+            width: 140px; 
             background: rgba(255, 255, 255, 0.4);
             border-color: rgba(255, 255, 255, 0.85);
             transform: translateY(-2px);
@@ -600,8 +602,7 @@
             justify-content: flex-start;
         }
 
-        .shine-draw-btn.expanded .draw-text,
-        .shine-draw-btn:hover .draw-text {
+        .shine-draw-btn.expanded .draw-text {
             max-width: 100px;
             opacity: 1;
             margin-left: 8px;
@@ -1606,17 +1607,17 @@
                 </div>
             </div>
 
-            <!-- 3 Bottom-Left Icon-Only Curved Square Buttons with Shine & Expand Draw Reveal on Click/Hover -->
+            <!-- 3 Bottom-Left Icon-Only Curved Square Buttons with Shine & Expand Draw Reveal on Click -->
             <div class="hero-left-buttons">
-                <a href="#" target="_blank" class="shine-draw-btn" id="liveLocationBtn" onclick="toggleExpand(this, event)" style="display: none;">
+                <a href="#" target="_blank" class="shine-draw-btn" id="liveLocationBtn" onclick="handleIconClick(this, event)" style="display: none;">
                     <i class="fa-solid fa-location-dot"></i>
                     <span class="draw-text">Live On</span>
                 </a>
-                <a href="#collectionsContainer" class="shine-draw-btn" onclick="toggleExpand(this, event)">
+                <a href="#collectionsContainer" class="shine-draw-btn" onclick="handleIconClick(this, event)">
                     <i class="fa-solid fa-bolt"></i>
                     <span class="draw-text">New Drop</span>
                 </a>
-                <a href="#collectionsContainer" class="shine-draw-btn" onclick="toggleExpand(this, event)">
+                <a href="#collectionsContainer" class="shine-draw-btn" onclick="handleIconClick(this, event)">
                     <i class="fa-solid fa-layer-group"></i>
                     <span class="draw-text">Collections</span>
                 </a>
@@ -1775,22 +1776,27 @@
         let currentUser = null;
         let cartItems = [];
 
-        // Toggle expand function for click-to-animate draw reveal on mobile/desktop
-        function toggleExpand(element, event) {
+        // First click expands/draws open; Second click redirects to the target section/link
+        function handleIconClick(element, event) {
             const isExpanded = element.classList.contains('expanded');
-            document.querySelectorAll('.shine-draw-btn').forEach(btn => btn.classList.remove('expanded'));
-            if (!isExpanded && element.getAttribute('href') === '#collectionsContainer') {
+            
+            if (!isExpanded) {
+                // First click: Prevent immediate navigation and trigger draw open animation
                 event.preventDefault();
+                // Close any other open buttons first
+                document.querySelectorAll('.shine-draw-btn').forEach(btn => btn.classList.remove('expanded'));
                 element.classList.add('expanded');
-                setTimeout(() => {
-                    const target = document.querySelector('#collectionsContainer');
-                    if (target) target.scrollIntoView({ behavior: 'smooth' });
-                }, 400);
-            } else if (!isExpanded && element.id === 'liveLocationBtn') {
-                // Allows direct link navigation if Live On is clicked twice or let href handle it
-                if (!element.classList.contains('expanded')) {
+            } else {
+                // Second click: Already expanded, allow navigation/scrolling
+                const targetHref = element.getAttribute('href');
+                if (targetHref && targetHref.startsWith('#')) {
                     event.preventDefault();
-                    element.classList.add('expanded');
+                    element.classList.remove('expanded');
+                    const target = document.querySelector(targetHref);
+                    if (target) target.scrollIntoView({ behavior: 'smooth' });
+                } else if (element.id === 'liveLocationBtn') {
+                    // Let external link work normally on second click
+                    return true;
                 }
             }
         }
