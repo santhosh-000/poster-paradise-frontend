@@ -530,7 +530,7 @@
             color: white;
             width: 44px;
             height: 44px;
-            border-radius: 12px; /* Corner curved square type */
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -542,7 +542,6 @@
             white-space: nowrap;
         }
 
-        /* Shine Light Animation Effect */
         .shine-draw-btn::after {
             content: '';
             position: absolute;
@@ -568,14 +567,13 @@
 
         .shine-draw-btn i {
             font-size: 1rem;
-            color: #ff6b00; /* ORANGE COLOR ICON */
+            color: #ff6b00;
             z-index: 2;
             flex-shrink: 0;
             margin-left: 2px;
             filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
         }
 
-        /* Draw type text reveal styling */
         .draw-text {
             display: inline-block;
             overflow: hidden;
@@ -591,7 +589,6 @@
             color: white;
         }
 
-        /* When clicked or expanded */
         .shine-draw-btn.expanded {
             width: 140px; 
             background: rgba(255, 255, 255, 0.4);
@@ -633,7 +630,7 @@
             border-color: white;
         }
 
-        /* ========== MARQUEE ========== */
+        /* ========== COUNTER & FILTER SECTION ========== */
         .customers-marquee-section {
             width: 100%;
             background: linear-gradient(180deg, #fff8f3 0%, #ffffff 100%);
@@ -662,11 +659,56 @@
             margin-top: 0.2rem;
         }
 
+        /* Category Filter Bar */
+        .category-filter-container {
+            max-width: 1400px;
+            width: 100%;
+            padding: 0 1.5rem;
+            display: flex;
+            gap: 0.75rem;
+            overflow-x: auto;
+            justify-content: center;
+            scrollbar-width: none;
+            margin-top: 0.5rem;
+        }
+
+        .category-filter-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .filter-chip {
+            background: white;
+            border: 1.5px solid var(--border-light);
+            color: var(--text-main);
+            padding: 0.55rem 1.25rem;
+            border-radius: 50px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: var(--transition);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
+
+        .filter-chip:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .filter-chip.active {
+            background: var(--gradient-accent);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 6px 16px rgba(255, 107, 0, 0.3);
+        }
+
         .marquee-container {
             width: 100%;
             overflow: hidden;
             mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
             -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+            margin-top: 0.5rem;
         }
 
         .marquee-track {
@@ -1630,12 +1672,18 @@
         </div>
     </section>
 
-    <!-- Counter + Marquee -->
+    <!-- Counter + Marquee + Category Filter -->
     <section class="customers-marquee-section">
         <div class="customers-stat-box">
             <div class="big-count"><span id="counterDisplay">0</span>+</div>
             <div class="label-text">Trustable Customers</div>
         </div>
+
+        <!-- Category Filter Bar Added Here -->
+        <div class="category-filter-container" id="categoryFilterContainer">
+            <!-- Dynamically populated category chips -->
+        </div>
+
         <div class="marquee-container">
             <div class="marquee-track" id="marqueeTrack"></div>
         </div>
@@ -1775,19 +1823,17 @@
         let siteSettings = {};
         let currentUser = null;
         let cartItems = [];
+        let selectedFilterCategory = 'all';
 
-        // First click expands/draws open; Second click redirects to the target section/link
+        // Toggle expand function for click-to-animate draw reveal on mobile/desktop
         function handleIconClick(element, event) {
             const isExpanded = element.classList.contains('expanded');
             
             if (!isExpanded) {
-                // First click: Prevent immediate navigation and trigger draw open animation
                 event.preventDefault();
-                // Close any other open buttons first
                 document.querySelectorAll('.shine-draw-btn').forEach(btn => btn.classList.remove('expanded'));
                 element.classList.add('expanded');
             } else {
-                // Second click: Already expanded, allow navigation/scrolling
                 const targetHref = element.getAttribute('href');
                 if (targetHref && targetHref.startsWith('#')) {
                     event.preventDefault();
@@ -1795,7 +1841,6 @@
                     const target = document.querySelector(targetHref);
                     if (target) target.scrollIntoView({ behavior: 'smooth' });
                 } else if (element.id === 'liveLocationBtn') {
-                    // Let external link work normally on second click
                     return true;
                 }
             }
@@ -1847,6 +1892,7 @@
                     categories = data;
                     renderNavigationDropdown();
                     renderDesktopDropdown();
+                    renderCategoryFilters();
                     renderCollections(5);
                     populateMarqueePosters();
                 } else {
@@ -1856,6 +1902,24 @@
                 console.error("Error fetching categories:", err);
                 categories = [];
             }
+        }
+
+        function renderCategoryFilters() {
+            const filterContainer = document.getElementById('categoryFilterContainer');
+            if (!filterContainer) return;
+
+            let html = `<button class="filter-chip ${selectedFilterCategory === 'all' ? 'active' : ''}" onclick="filterByCategory('all')">All Categories</button>`;
+            categories.forEach(cat => {
+                const isActive = selectedFilterCategory === cat.id ? 'active' : '';
+                html += `<button class="filter-chip ${isActive}" onclick="filterByCategory('${cat.id}')">${cat.title}</button>`;
+            });
+            filterContainer.innerHTML = html;
+        }
+
+        function filterByCategory(catId) {
+            selectedFilterCategory = catId;
+            renderCategoryFilters();
+            renderCollections(5);
         }
 
         function populateMarqueePosters() {
@@ -2321,7 +2385,13 @@
             const mainContainer = document.getElementById('collectionsContainer');
             mainContainer.innerHTML = '';
 
-            const visibleCategories = categories.slice(0, limit);
+            // Filter categories based on selected filter chip
+            let visibleCategories = categories;
+            if (selectedFilterCategory !== 'all') {
+                visibleCategories = categories.filter(cat => cat.id === selectedFilterCategory);
+            } else {
+                visibleCategories = categories.slice(0, limit);
+            }
 
             visibleCategories.forEach(cat => {
                 const section = document.createElement('section');
@@ -2370,7 +2440,7 @@
             });
 
             const viewMoreBtnContainer = document.getElementById('viewMoreContainer');
-            if (limit >= categories.length) {
+            if (selectedFilterCategory !== 'all' || limit >= categories.length) {
                 viewMoreBtnContainer.style.display = 'none';
             } else {
                 viewMoreBtnContainer.style.display = 'block';
@@ -2378,6 +2448,8 @@
         }
 
         function showAllCategories() {
+            selectedFilterCategory = 'all';
+            renderCategoryFilters();
             renderCollections(categories.length);
         }
 
