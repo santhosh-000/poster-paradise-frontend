@@ -510,82 +510,88 @@
             object-fit: cover;
         }
 
-        .hero-live-location {
+        /* ========== 3 BOTTOM-LEFT BUTTONS WITH SHINE & DRAW REVEAL EFFECT ========== */
+        .hero-left-buttons {
             position: absolute;
-            bottom: 28px;
-            left: 28px;
-            background: rgba(255, 255, 255, 0.25);
-            backdrop-filter: blur(12px);
-            color: white;
-            padding: 0.65rem 1.3rem;
-            border-radius: 50px;
-            font-size: 0.9rem;
-            font-weight: 700;
+            bottom: 25px;
+            left: 25px;
             display: flex;
-            align-items: center;
-            gap: 0.6rem;
-            z-index: 10;
-            border: 1px solid rgba(255,255,255,0.4);
-            text-decoration: none;
-            transition: var(--transition);
-            overflow: hidden;
-        }
-
-        .hero-live-location:hover {
-            background: rgba(255,255,255,0.4);
-            transform: translateY(-2px);
-        }
-
-        .hero-live-location i {
-            color: #ffd700;
-            animation: pulseDot 2s infinite;
-        }
-
-        @keyframes pulseDot {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.25); opacity: 0.7; }
-        }
-
-        /* New Drops & Collections Action Buttons Container (Bottom Left, Outside Banner Image) */
-        .hero-bottom-actions {
-            max-width: 1400px;
-            width: 100%;
-            margin: -36px auto 0 auto;
-            padding: 0 1.5rem;
-            display: flex;
-            gap: 12px;
+            flex-direction: column;
+            gap: 10px;
             z-index: 20;
-            position: relative;
         }
 
-        .hero-action-btn {
-            background: white;
-            border: 1px solid var(--border-light);
-            color: var(--text-main);
-            padding: 0.65rem 1.25rem;
+        .shine-draw-btn {
+            position: relative;
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.45);
+            color: white;
+            padding: 0.6rem 1.1rem;
             border-radius: 50px;
             font-size: 0.85rem;
-            font-weight: 800;
-            text-decoration: none;
-            display: flex;
+            font-weight: 700;
+            display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+            gap: 0.6rem;
+            text-decoration: none;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
             transition: var(--transition);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            cursor: pointer;
+            width: max-content;
         }
 
-        .hero-action-btn.primary {
-            background: var(--gradient-accent);
-            color: white;
-            border: none;
-            box-shadow: 0 6px 20px rgba(255, 107, 0, 0.3);
+        /* Shine Light Animation Effect */
+        .shine-draw-btn::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                60deg,
+                transparent 30%,
+                rgba(255, 255, 255, 0.55) 50%,
+                transparent 70%
+            );
+            transform: rotate(30deg) translateX(-100%);
+            animation: shineEffect 3s infinite linear;
         }
 
-        .hero-action-btn:hover {
+        @keyframes shineEffect {
+            0% { transform: rotate(30deg) translateX(-100%); }
+            100% { transform: rotate(30deg) translateX(100%); }
+        }
+
+        .shine-draw-btn:hover {
+            background: rgba(255, 255, 255, 0.4);
+            border-color: rgba(255, 255, 255, 0.85);
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+        }
+
+        .shine-draw-btn i {
+            color: #ffd700;
+            z-index: 2;
+        }
+
+        /* Draw type text reveal styling */
+        .draw-text {
+            display: inline-block;
+            overflow: hidden;
+            white-space: nowrap;
+            width: 0;
+            animation: drawTextAnim 2.5s cubic-bezier(0.77, 0, 0.175, 1) infinite alternate;
+            z-index: 2;
+        }
+
+        @keyframes drawTextAnim {
+            0% { width: 0; opacity: 0.3; }
+            50% { width: 95px; opacity: 1; }
+            100% { width: 95px; opacity: 1; }
         }
 
         .hero-pills {
@@ -1586,22 +1592,27 @@
                     <img src="https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=1400&q=80" alt="Landing Slide 2">
                 </div>
             </div>
-            <a href="#" target="_blank" class="hero-live-location" id="liveLocationBtn" style="display: none;">
-                <i class="fa-solid fa-location-dot"></i> Live On
-            </a>
+
+            <!-- 3 Bottom-Left Buttons with Shine & Draw Reveal Effect -->
+            <div class="hero-left-buttons">
+                <a href="#" target="_blank" class="shine-draw-btn" id="liveLocationBtn" style="display: none;">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <span class="draw-text">Live On</span>
+                </a>
+                <a href="#collectionsContainer" class="shine-draw-btn">
+                    <i class="fa-solid fa-bolt"></i>
+                    <span class="draw-text">New Drop</span>
+                </a>
+                <a href="#collectionsContainer" class="shine-draw-btn">
+                    <i class="fa-solid fa-layer-group"></i>
+                    <span class="draw-text">Collections</span>
+                </a>
+            </div>
+
             <div class="hero-pills">
                 <button class="hero-pill active" onclick="currentSlide(0)" aria-label="Slide 1"></button>
                 <button class="hero-pill" onclick="currentSlide(1)" aria-label="Slide 2"></button>
             </div>
-        </div>
-        <!-- New Drops & Collections Action Buttons (Outside Banner Image, Bottom Left) -->
-        <div class="hero-bottom-actions">
-            <a href="#collectionsContainer" class="hero-action-btn primary">
-                <i class="fa-solid fa-bolt"></i> New Drops
-            </a>
-            <a href="#collectionsContainer" class="hero-action-btn">
-                <i class="fa-solid fa-layer-group"></i> Collections
-            </a>
         </div>
     </section>
 
@@ -1766,7 +1777,7 @@
                 const liveBtn = document.getElementById('liveLocationBtn');
                 if (siteSettings.isLive && siteSettings.liveLocation) {
                     liveBtn.href = siteSettings.liveLocation;
-                    liveBtn.style.display = 'flex';
+                    liveBtn.style.display = 'inline-flex';
                 } else {
                     liveBtn.style.display = 'none';
                 }
